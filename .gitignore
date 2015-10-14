@@ -1,0 +1,12 @@
+/.idea
+/.settings
+/.project
+/node_modules
+
+tmp
+~*
+*.db
+*.bak
+*.tmp
+*.swp
+.DS_Store

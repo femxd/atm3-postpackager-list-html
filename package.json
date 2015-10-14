@@ -1,0 +1,23 @@
+{
+  "name": "atm3-postpackager-list-html",
+  "version": "0.0.1",
+  "description": "atm3 generate list.html",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/femxd/atm3-postpackager-list-html.git"
+  },
+  "keywords": [
+    "list.html",
+    "atm3"
+  ],
+  "author": "allanfish",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/femxd/atm3-postpackager-list-html/issues"
+  },
+  "homepage": "https://github.com/femxd/atm3-postpackager-list-html#readme"
+}
