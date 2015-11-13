@@ -13,9 +13,7 @@ module.exports = function (ret, conf, settings, opt) {
                     listFile: null
                 }
             }
-            if (!!folderObj.listFile) {
-                return false;
-            } else if (file.basename === 'list.html') {
+            if (file.basename === 'list.html') {
                 folderObj.listFile = file;
             } else {
                 folderObj.files.push(file);
@@ -29,9 +27,9 @@ module.exports = function (ret, conf, settings, opt) {
             if (!listFile) {
                 fis.file.wrap(folderObj.dirname + "/list.html");
                 listFile.setContent(content);
+                generateListFile(listFile, folderObj.files);
+                fis.log.debug("generate list.html ok");
             }
-            generateListFile(listFile, folderObj.files);
-            fis.log.debug("generate list.html ok");
         }
     });
 }
