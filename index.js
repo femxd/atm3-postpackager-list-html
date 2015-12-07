@@ -25,21 +25,22 @@ module.exports = function (ret, conf, settings, opt) {
         if (folderObj.files.length > 1) {
             var listFile = folderObj.listFile;
             if (!listFile) {
-                fis.file.wrap(folderObj.dirname + "/list.html");
+                listFile = fis.file.wrap(folderObj.dirname + "/list.html");
                 listFile.setContent(content);
-                generateListFile(listFile, folderObj.files);
-                fis.log.debug("generate list.html ok");
+                fis.compile(listFile);
             }
+            generateListFile(listFile, folderObj.files);
+            fis.log.debug("generate list.html ok");
         }
     });
-}
+};
 
 function generateListFile(listFile, files) {
     var body = [],
         tpl = "<li><a href='{href}'>{title}</a></li>";
 
     files.forEach(function (file) {
-        var matches = file.getContent().match(/\<title\>\S*\-(\S*)<\/title>/i);
+        var matches = file.getContent().match(/\<title\>(\S*\)-(\S*)<\/title>/i);
         if (!matches) {
             matches = file.getContent().match(/\<title\>(\S*)<\/title>/i)
         }

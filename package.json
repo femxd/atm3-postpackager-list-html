@@ -1,6 +1,6 @@
 {
   "name": "atm3-postpackager-list-html",
-  "version": "0.0.3",
+  "version": "0.0.6",
   "description": "atm3 generate list.html",
   "main": "index.js",
   "scripts": {
