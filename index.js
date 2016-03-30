@@ -1,51 +1,57 @@
 var path = require('path'),
-    listFilePath = path.join(__dirname, "./list.html"),
-    content = fis.util.read(listFilePath);
+  listFilePath = path.join(__dirname, "./list.html"),
+  content = fis.util.read(listFilePath);
 
-module.exports = function (ret, conf, settings, opt) {
-    var folders = {};
-    fis.util.map(ret.src, function (subpath, file) {
-        if (file.isHtmlLike) {
-            var folderObj = folders[file.subdirname];
-            if (!folderObj) {
-                folderObj = folders[file.subdirname] = {
-                    files: [],
-                    listFile: null
-                }
-            }
-            if (file.basename === 'list.html') {
-                folderObj.listFile = file;
-            } else {
-                folderObj.files.push(file);
-                folderObj.dirname = file.dirname;
-            }
-        }
-    });
-    fis.util.map(folders, function (_subdirname, folderObj) {
-        if (folderObj.files.length > 1) {
-            var listFile = folderObj.listFile;
-            if (!listFile) {
-                listFile = fis.file.wrap(folderObj.dirname + "/list.html");
-                listFile.setContent(content);
-                fis.compile(listFile);
-            }
-            generateListFile(listFile, folderObj.files);
-            fis.log.debug("generate list.html ok");
-        }
-    });
+module.exports = function(ret, conf, settings, opt) {
+  var htmls = {};
+  fis.util.map(ret.src, function(subpath, file) {
+    if (!file.isHtmlLike) {
+      return false;
+    }
+
+    var folder = htmls[file.subdirname];
+    if (!folder) {
+      htmls[file.subdirname] = [];
+      folder = htmls[file.subdirname];
+    }
+    folder.push(file);
+  });
+  var rootFolder = Object.keys(htmls).sort(function(alen, blen) {
+    if (alen < blen) {
+      return -1;
+    } else if (alen > blen) {
+      return 1;
+    } else {
+      return 0;
+    }
+  })[0];
+  var rootFile = htmls[rootFolder][0];
+  fis.log.allan("rootFolder: ", rootFolder);
+  var listFile = fis.file.wrap(rootFile.dirname + "/list.html");
+  var listBodys = Object.keys(htmls).map(function(folder) {
+    return generateListBody(folder, htmls[folder], rootFolder);
+  });
+  listFile.setContent(content.replace('${list}', listBodys.join('\r\n')));
+
+  fis.log.allan("listFile: \n", listFile.getContent());
+  fis.compile(listFile);
 };
 
-function generateListFile(listFile, files) {
-    var body = [],
-        tpl = "<li><a href='{href}'>{title}</a></li>";
+function generateListBody(folder, files, rootFolder) {
+  var body = [],
+    ulTpl = "<ul><h2>{title}</h2>",
+    tpl = "<li><a href='{href}'>{title}</a></li>";
 
-    files.forEach(function (file) {
-        var matches = file.getContent().match(/\<title\>(\S*\)-(\S*)<\/title>/i);
-        if (!matches) {
-            matches = file.getContent().match(/\<title\>(\S*)<\/title>/i)
-        }
-        var title = matches ? RegExp.$1 : file.basename;
-        body.push(tpl.replace('{href}', file.basename).replace('{title}', title));
-    });
-    listFile.setContent(listFile.getContent().replace('${list}', body.join("\r\n")));
+  body.push(ulTpl.replace('{title}', folder));
+  files.forEach(function(file) {
+    var matches = file.getContent().match(/<title>(\S*)-(\S*)<\/title>/i);
+    if (!matches) {
+      matches = file.getContent().match(/<title>(\S*)<\/title>/i)
+    }
+    var title = matches ? RegExp.$1 : file.basename;
+    var href = path.relative(rootFolder, file.release);
+    body.push(tpl.replace('{href}', href).replace('{title}', title));
+  });
+  body.push("</ul>");
+  return body.join("\r\n");
 }
