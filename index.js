@@ -26,14 +26,14 @@ module.exports = function(ret, conf, settings, opt) {
     }
   })[0];
   var rootFile = htmls[rootFolder][0];
-  fis.log.allan("rootFolder: ", rootFolder);
+  // fis.log.debug("rootFolder: ", rootFolder);
   var listFile = fis.file.wrap(rootFile.dirname + "/list.html");
   var listBodys = Object.keys(htmls).map(function(folder) {
     return generateListBody(folder, htmls[folder], rootFolder);
   });
   listFile.setContent(content.replace('${list}', listBodys.join('\r\n')));
 
-  fis.log.allan("listFile: \n", listFile.getContent());
+  // fis.log.allan("listFile: \n", listFile.getContent());
   fis.compile(listFile);
 };
 
