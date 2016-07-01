@@ -31,6 +31,9 @@ module.exports = function(ret, conf, settings, opt) {
   var listBodys = Object.keys(htmls).map(function(folder) {
     return generateListBody(folder, htmls[folder], rootFolder);
   });
+  if(listBodys.length <= 1){
+    return;
+  }
   listFile.setContent(content.replace('${list}', listBodys.join('\r\n')));
 
   // fis.log.allan("listFile: \n", listFile.getContent());
