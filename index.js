@@ -43,7 +43,7 @@ module.exports = function(ret, conf, settings, opt) {
 function generateListBody(folder, files, rootFolder) {
   var body = [],
     ulTpl = "<ul><h2>{title}</h2>",
-    tpl = "<li><a href='{href}'>{title}</a></li>";
+    tpl = "<li><a href='{href}' target=\"__blank\">{title}</a></li>";
 
   body.push(ulTpl.replace('{title}', folder));
   files.forEach(function(file) {
